@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Relation</title>
+</head>
+<body>
+	<div class="main">
+		<label>Enter no.of pairs </label> <input type="number" min=1 required
+			id="pair">
+		<button onclick="createBox(document.getElementById('pair').value)">Go</button>
+	</div>
+	<p id="result"></p>
+	<script type="text/javascript">
+	
+	const relation=new Map();
+	function createBox(pair){
+		
+		const mainDiv=document.getElementsByClassName('main');	
+		for(let i=1;i<=pair;i++){
+			const innerDiv=document.createElement('div');
+			innerDiv.class="innerdiv";
+			
+			const parentInput=document.createElement('input');
+			parentInput.type="text";
+			parentInput.placeholder="Enter Parent Name";
+			parentInput.setAttribute("class","parents");
+			//parentInput.id="parent"+i;
+			
+			const childInput=document.createElement('input');
+			childInput.type="text";
+			childInput.placeholder="Enter Child Name";
+			//childInput.id="child"+i;
+			childInput.setAttribute("class","children");
+
+			innerDiv.append(parentInput);
+			innerDiv.append(childInput);
+			
+			mainDiv[0].append(innerDiv);
+		}
+		const generate=document.createElement("button");
+		generate.setAttribute("onclick","setGrandChild(document.getElementById('pair').value)");
+		generate.innerHTML="Generate";
+		mainDiv[0].append(generate);
+		
+		
+	}
+	function setGrandChild(pair){
+		const mainDiv=document.getElementsByClassName('main');	
+		const parents=document.getElementsByClassName('parents');
+		const children=document.getElementsByClassName('children');
+		for(let i=0;i<pair;i++){
+			let parent=parents[i].value;
+			let child=children[i].value;
+			if(relation.has(parent)){
+				relation.get(parent).push(child);
+			}else{
+				relation.set(parent,new Array());
+				relation.get(parent).push(child);
+			}
+		}
+		const name=document.createElement('input');
+		name.type="text";
+		name.placeholder="Enter Name";
+		name.id="name";
+		mainDiv[0].append(name);
+
+		const find=document.createElement("button");
+		find.setAttribute("onclick","findGrandChild(document.getElementById('name').value)");
+		find.innerHTML="Find";
+		mainDiv[0].append(find);
+	}
+	
+	function findGrandChild(names) {
+		var names=document.getElementById('name').value;
+		const grandchild = [];
+		var child = [];
+		var name = names.toString();
+			if(relation.has(name)){
+			child=relation.get(name);
+				for(let i=0;i<child.length;i++){
+					if(relation.has(child[i])){
+						grandchild.push(relation.get(child[i]));
+					}
+				}
+				if (grandchild.length === 0) {
+					document.getElementById('result').innerHTML = name
+							+ " has no grandchild";
+				} else if (grandchild.length === 1) {
+					document.getElementById('result').innerHTML = name + " has "
+							+ grandchild.length + " grandchildren . They are : "
+							+ grandchild;
+		
+				} else {
+					document.getElementById('result').innerHTML = name + " have "
+							+ grandchild.length + " grandchildren . They are : "
+							+ grandchild;
+				}	
+			
+			}else{
+				const values=relation.values();
+				var flag=0;
+				for(let value of values){
+					if(value.includes(name)){
+						++flag;
+					}
+				}
+				if(flag===0){
+					document.getElementById('result').innerHTML = name
+					+ " is not a member in family";
+				}else{
+					document.getElementById('result').innerHTML = name
+					+ " is a grandchild";
+				}			
+				flag=0;
+			}
+		
+	}
+</script>
+</body>
+</html>
