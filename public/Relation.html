@@ -14,61 +14,85 @@
 	<script type="text/javascript">
 	
 	const relation=new Map();
+	var count=0;
 	function createBox(pair){
-		
-		const mainDiv=document.getElementsByClassName('main');	
-		for(let i=1;i<=pair;i++){
-			const innerDiv=document.createElement('div');
-			innerDiv.class="innerdiv";
+		++count;
+		if(count===1){
+			const mainDiv=document.getElementsByClassName('main');	
+			for(let i=1;i<=pair;i++){
+				const innerDiv=document.createElement('div');
+				innerDiv.class="innerdiv";
+				
+				const parentInput=document.createElement('input');
+				parentInput.type="text";
+				parentInput.placeholder="Enter Parent Name";
+				parentInput.setAttribute("class","parents");
+				parentInput.setAttribute("required","true");
+				//parentInput.id="parent"+i;
+				
+				const childInput=document.createElement('input');
+				childInput.type="text";
+				childInput.placeholder="Enter Child Name";
+				//childInput.id="child"+i;
+				childInput.setAttribute("class","children");
+				childInput.setAttribute("required","true");
+				
+				innerDiv.append(parentInput);
+				innerDiv.append(childInput);
+				
+				mainDiv[0].append(innerDiv);
+			}
+			const generate=document.createElement("button");
+			generate.setAttribute("onclick","setGrandChild(document.getElementById('pair').value)");
+			generate.innerHTML="Generate";
+			mainDiv[0].append(generate);
 			
-			const parentInput=document.createElement('input');
-			parentInput.type="text";
-			parentInput.placeholder="Enter Parent Name";
-			parentInput.setAttribute("class","parents");
-			//parentInput.id="parent"+i;
-			
-			const childInput=document.createElement('input');
-			childInput.type="text";
-			childInput.placeholder="Enter Child Name";
-			//childInput.id="child"+i;
-			childInput.setAttribute("class","children");
-
-			innerDiv.append(parentInput);
-			innerDiv.append(childInput);
-			
-			mainDiv[0].append(innerDiv);
+		}else{
+			document.getElementById('result').innerHTML = " Input fields already generated";
 		}
-		const generate=document.createElement("button");
-		generate.setAttribute("onclick","setGrandChild(document.getElementById('pair').value)");
-		generate.innerHTML="Generate";
-		mainDiv[0].append(generate);
-		
 		
 	}
 	function setGrandChild(pair){
 		const mainDiv=document.getElementsByClassName('main');	
 		const parents=document.getElementsByClassName('parents');
 		const children=document.getElementsByClassName('children');
-		for(let i=0;i<pair;i++){
-			let parent=parents[i].value;
-			let child=children[i].value;
-			if(relation.has(parent)){
-				relation.get(parent).push(child);
-			}else{
-				relation.set(parent,new Array());
-				relation.get(parent).push(child);
+		var flag=0;
+		for(let i=0;i<parents.length;i++){
+			if(parents[i].value.length===0){
+				flag++;
 			}
 		}
-		const name=document.createElement('input');
-		name.type="text";
-		name.placeholder="Enter Name";
-		name.id="name";
-		mainDiv[0].append(name);
+		for(let i=0;i<children.length;i++){
+			if(children[i].value.length===0){
+				flag++;
+			}
+		}
+		if(flag==0){
+			for(let i=0;i<pair;i++){
+				let parent=parents[i].value;
+				let child=children[i].value;
+				if(relation.has(parent)){
+					relation.get(parent).push(child);
+				}else{
+					relation.set(parent,new Array());
+					relation.get(parent).push(child);
+				}
+			}
+			const name=document.createElement('input');
+			name.type="text";
+			name.placeholder="Enter Name";
+			name.id="name";
+			mainDiv[0].append(name);
 
-		const find=document.createElement("button");
-		find.setAttribute("onclick","findGrandChild(document.getElementById('name').value)");
-		find.innerHTML="Find";
-		mainDiv[0].append(find);
+			const find=document.createElement("button");
+			find.setAttribute("onclick","findGrandChild(document.getElementById('name').value)");
+			find.innerHTML="Find";
+			mainDiv[0].append(find);
+		}
+		else{
+			document.getElementById('result').innerHTML = "Please enter the values in input field";
+		}
+		
 	}
 	
 	function findGrandChild(names) {
